@@ -1,3 +1,18 @@
+/*
+ * Copyright (c) 2020 HiSilicon (Shanghai) Technologies CO., LIMITED.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 #include "app_main.h"
 
 #include <hi3861_platform.h>
@@ -57,33 +72,7 @@
 
 #include <hi_tsensor.h>
 #include <app_io_init.h>
-
-#include <ssd1306_oled.h>
-#include <app_demo_multi_sample.h>
-#include <app_demo_uart.h>
-
-#ifdef CONFIG_HISTREAMING_SUPPORT
-#include <histreaming.h>
 #include <wifi_softap.h>
-#endif
-#ifdef CONFIG_COLORFUL_LIGHT
-#include <app_demo_colorful_sample.h>
-#endif
-#ifdef CONFIG_TRAFFIC_LIGHT
-#include <app_demo_traffic_sample.h>
-#endif
-#ifdef CONFIG_ENVIRONMENTAL_MONITORING
-#include <app_demo_environment.h>
-#endif
-#ifdef CONFIG_NFC
-#include <C081_nfc.h>
-#include <app_demo_multi_sample.h>
-#endif
-#ifdef CONFIG_ALL_DEMO
-extern hi_u8 g_menu_select;
-extern hi_u8 g_menu_mode; 
-#endif
-
 
 #define APP_DEMO_RELEASE_MEM_TASK_SIZE 0x200
 /*
@@ -188,7 +177,7 @@ hi_u32 app_sdio_init(hi_void)
 #define CLKEN_SDIO_WBUS 4
 
 /* you can disable some clocks to reduce power consumption based on service requirements */
-static hi_void peripheral_close_clken(hi_void)
+hi_void peripheral_close_clken(hi_void)
 {
     hi_u16 reg_val;
     hi_reg_read16(CLDO_CTL_CLKEN_REG, reg_val);
@@ -220,11 +209,11 @@ static hi_void peripheral_close_clken(hi_void)
 
 static hi_uart_attribute g_at_uart_cfg  = {115200, 8, 1, 0, 0};
 
-static hi_bool g_have_inited = HI_FALSE;
+hi_bool g_have_inited = HI_FALSE;
 static app_iocfg_backup g_iocfg_backup = {0};
 
 /* time-consuming operations, such as log output, are not allowed in the low-power process */
-static hi_void peripheral_init(hi_void)
+hi_void peripheral_init(hi_void)
 {
     hi_u32 ret;
     hi_u32 err_info = 0;
@@ -330,7 +319,7 @@ static hi_void peripheral_init(hi_void)
 #endif
 }
 
-static hi_void peripheral_init_no_sleep(hi_void)
+hi_void peripheral_init_no_sleep(hi_void)
 {
     /*
      * Example: To initialize a peripheral that does not need to be reinitialized
@@ -516,63 +505,68 @@ hi_void app_main(hi_void)
 #endif
 #endif
 
-#ifdef CONFIG_HISTREAMING_SUPPORT
-    if (hi_wifi_start_softap() != 0) {
-        printf("open softap failure\n");
-        return;
-    }        
-    printf("open softap ok\n");
-    void *link_platform = histreaming_open();
-    if (!link_platform) {
-        printf("histreaming open failed!\n");
-    } else {
-        printf("histreaming open ok\n");
-    }
-#elif WIFI_INIT
-    ret = hi_wifi_init(APP_INIT_VAP_NUM, APP_INIT_USR_NUM);
-    if (ret != HISI_OK) {
-        printf("wifi init failed!\n");
-    } else {
-        printf("wifi init success!\n");
-    }  
+    
+
+#define CONFIG_TENCENT_CLOUD_SUPPORT
+#ifdef CONFIG_TENCENT_CLOUD_SUPPORT
+    extern int app_demo_iot(void);
+    app_demo_iot();
+    printf("iot demo\n");
 #endif
-    app_demo_task_release_mem(); /* 释放系统栈内存所使用任务 */
 
-    /* start add 2020/4/28*/ 
+ /* hx711 entry */
+    hi_u32 hx711_read_task(hi_void);
+    hx711_read_task();
+    printf("hx711 init success\n");
+
+    /* rtc entry */
+    hi_void app_demo_rtc_task(hi_void);
+    app_demo_rtc_task();
+    printf("rtc init success\n");
+
+
+/*hisignaling protocol task*/
+    hi_u32 hisignalling_msg_task(hi_void);
+    hisignaling_msg_task();
+
+    /* uart entry */
+    hi_void uart_demo(hi_void);
     uart_demo();
-    test_gpio_init(); 
-    app_multi_sample_demo();
- #ifdef INTERRUPT   
-     gpio_isr_demo();
-     gpio_isr_task();
-#endif 
+    printf("uart & hisignaling init success\n");
 
-#ifdef CONFIG_COLORFUL_LIGHT
-    printf("colorful light open ok\r\n");
-    g_menu_select = COLORFUL_LIGHT_MENU;
-    g_menu_mode = SUB_MODE_SELECT_MODE;  
-    colorful_light_func();
-#elif  CONFIG_TRAFFIC_LIGHT
-    printf("traffic light open ok\r\n"); 
-    g_menu_select = TRAFFIC_LIGHT_MENU; 
-    g_menu_mode  =SUB_MODE_SELECT_MODE; 
-    traffic_light_func();  
-#elif  CONFIG_ENVIRONMENTAL_MONITORING
-    printf("environmental monitoring open ok\r\n");  
-    g_menu_select = ENVIRONMENT_MENU;
-    g_menu_mode  =SUB_MODE_SELECT_MODE; 
-    environment_func();
-    app_demo_aht20_task();
-#elif  CONFIG_NFC
-    printf("nfc open ok\r\n");
-    app_nfc_display_task();
-    app_c08i_nfc_i2c_demo_task();
-#elif CONFIG_ALL_DEMO
-    printf("all demo open ok\r\n");
-    app_oled_i2c_demo_task();
-    app_c08i_nfc_i2c_demo_task();
-    app_demo_aht20_task(); 
-#endif           
-    /*-----------------------End----------------------*/
+// #ifdef CONFIG_UDP_SUPPORT
+// #ifdef CONFIG_WIFI_AP_MODULE        
+//     if (hi_wifi_start_softap() != 0) {
+//         printf("open softap failure\n");
+//         return;
+//     }        
+//     printf("open softap ok\n");
+// #else
+//     /*start wifi sta module*/
+//     extern hi_void WifiStaReadyWait(hi_void);
+//      WifiStaReadyWait();
+// #endif     
+//     /*start udp server*/
+//     extern int udp_server_demo(void);
+//     udp_server_demo();
+// #endif 
+//     /*start wifi ap module*/
+
+// #ifdef UDP_CLIENT
+//     /*start udp client*/    
+//     extern int udp_client_demo(void);
+//     udp_client_demo();
+// #endif 
+// #ifdef LWIP_MDNS   
+//     /*start lwip mDNS*/
+//     extern void lwip_mdns_demo(void);
+//     lwip_mdns_demo();
+// #endif    
 }
 #endif
+
+
+
+
+
+

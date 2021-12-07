@@ -29,6 +29,31 @@ hi_void pwm_1_demo(hi_void)
     hi_pwm_start(HI_PWM_PORT_PWM1, 750, 1500); /* duty: 750 freq:1500 */
 }
 
+
+hi_void set_engine_back_rotation(hi_gpio_idx id,hi_s32 duty)
+{
+  
+    // hi_u32 count = duty/25;
+    // for(int i=0; i <= count; i++){
+    //     hi_gpio_set_ouput_val(id,HI_GPIO_VALUE1);
+    //     hi_udelay(duty-i*25);
+    //     hi_gpio_set_ouput_val(id,HI_GPIO_VALUE0);
+    //     hi_udelay(20000-(duty-i*25));
+    // }
+    // hi_udelay(50000);
+
+
+    hi_u32 count = duty/25;
+
+    for(int i=0; i <= count; i++){
+        hi_gpio_set_ouput_val(id,HI_GPIO_VALUE1);
+        hi_udelay(i*25);
+        hi_gpio_set_ouput_val(id,HI_GPIO_VALUE0);
+        hi_udelay(20000-i*25);
+    }
+}
+
+
 hi_void pwm_2_demo(hi_void)
 {
     
@@ -45,24 +70,56 @@ hi_void pwm_2_demo(hi_void)
         // hi_udelay(1000000*2);
         // set_engine_angle_forward_rotation(HI_IO_NAME_GPIO_6,2000);
         // hi_udelay(1000000*2);
-    set_engine_angle_forward_rotation(HI_IO_NAME_GPIO_7,2500);
-    hi_udelay(1000000*2);
-    set_engine_angle_forward_rotation(HI_IO_NAME_GPIO_7,500);
-    hi_udelay(50000*3);
+    set_engine_angle_transfer(HI_IO_NAME_GPIO_7,2500);
+    hi_udelay(1000000/2);
+    set_engine_angle_transfer(HI_IO_NAME_GPIO_7,500);
+    // hi_udelay(50000*3);
 }
 
 //正转
 hi_void set_engine_angle_forward_rotation(hi_gpio_idx id,hi_s32 duty)
 {
   
+    hi_u32 count = duty/25;
+    for(int i=0; i <= count; i++){
+        hi_gpio_set_ouput_val(id,HI_GPIO_VALUE1);
+        hi_udelay(duty-i*25);
+        hi_gpio_set_ouput_val(id,HI_GPIO_VALUE0);
+        hi_udelay(20000-(duty-i*25));
+    }
+    hi_udelay(50000);
 
-    for(int i=0;i<=5;i++){
+
+    //   hi_u32 count = duty/25;
+
+    // for(int i=0; i <= count; i++){
+    //     hi_gpio_set_ouput_val(id,HI_GPIO_VALUE1);
+    //     hi_udelay(i*25);
+    //     hi_gpio_set_ouput_val(id,HI_GPIO_VALUE0);
+    //     hi_udelay(20000-i*25);
+    // }
+}
+
+//反转
+hi_void set_engine_angle_transfer(hi_gpio_idx id,hi_s32 duty)
+{
+    // hi_u32 count = duty/25;
+
+    // for(int i=0; i <= count; i++){
+    //     hi_gpio_set_ouput_val(id,HI_GPIO_VALUE1);
+    //     hi_udelay(i*25);
+    //     hi_gpio_set_ouput_val(id,HI_GPIO_VALUE0);
+    //     hi_udelay(20000-i*25);
+    // }
+
+      for(int i=0;i<=5;i++){
         hi_gpio_set_ouput_val(id,HI_GPIO_VALUE1);
         hi_udelay(duty);
         hi_gpio_set_ouput_val(id,HI_GPIO_VALUE0);
         hi_udelay(20000-duty);
     }
-    
+
+    // hi_udelay(50000);
     // hi_u32 count = duty/25;
     // for(int i=0; i <= count; i++){
     //     hi_gpio_set_ouput_val(id,HI_GPIO_VALUE1);
@@ -70,21 +127,8 @@ hi_void set_engine_angle_forward_rotation(hi_gpio_idx id,hi_s32 duty)
     //     hi_gpio_set_ouput_val(id,HI_GPIO_VALUE0);
     //     hi_udelay(20000-(duty-i*25));
     // }
-    //hi_udelay(50000);
-}
+    // hi_udelay(50000);
 
-//反转
-hi_void set_engine_angle_transfer(hi_gpio_idx id,hi_s32 duty)
-{
-    hi_u32 count = duty/25;
-
-    for(int i=0; i <= count; i++){
-        hi_gpio_set_ouput_val(id,HI_GPIO_VALUE1);
-        hi_udelay(i*25);
-        hi_gpio_set_ouput_val(id,HI_GPIO_VALUE0);
-        hi_udelay(20000-i*25);
-    }
-    hi_udelay(50000);
 }
 
 //20ms一个波，
@@ -110,10 +154,21 @@ hi_void pwm_3_demo(hi_void)
         // hi_udelay(1000000*2);
         // set_engine_angle_forward_rotation(HI_IO_NAME_GPIO_6,2000);
         // hi_udelay(1000000*2);
-    set_engine_angle_forward_rotation(HI_IO_NAME_GPIO_6,2500);
-    hi_udelay(1000000*2);
-    set_engine_angle_forward_rotation(HI_IO_NAME_GPIO_6,500);
-    hi_udelay(50000*3);
+    
+  
+    set_engine_angle_forward_rotation(HI_IO_NAME_GPIO_6,1500);
+    hi_udelay(1000000/4);
+   
+    set_engine_back_rotation(HI_IO_NAME_GPIO_6,1500);
+
+     // set_engine_angle_transfer(HI_IO_NAME_GPIO_7,2500);
+    // set_engine_angle_forward_rotation(HI_IO_NAME_GPIO_6,500);
+    // hi_udelay(50000*3);
+
+    // set_engine_angle_transfer(HI_IO_NAME_GPIO_6,2500);
+    // hi_udelay(1000000*2);
+    // set_engine_angle_transfer(HI_IO_NAME_GPIO_6,500);
+    // hi_udelay(50000*3);
     
         
 

@@ -4,7 +4,7 @@
         "path": ".\\tools\\hi3861\\hcc_riscv32_win\\bin",
         "make": {
             "path": "",
-            "script": "d:\\haisi_enembled\\project\\wifi-ioT\\wifi-iot\\SConstruct",
+            "script": "d:\\haisi_enembled\\project\\iotcloud_tencent_devices\\iotcloud_tencent_devices\\SConstruct",
             "args": "-j 32"
         },
         "prefix": "riscv32-unknown-elf"
@@ -119,17 +119,17 @@
         "active": "false"
     },
     "component": {
-        "ALL_DEMO": "N",
+        "ALL_DEMO": "Y",
         "CE Authentication": "Y",
         "COAP support": "Y",
-        "COLORFUL_LIGHT": "Y",
+        "COLORFUL_LIGHT": "N",
         "DMA driver support": "N",
         "ECC": "N",
         "ENVIRONMENTAL_MONITORING": "N",
         "Enable AT command": "N",
         "Enable DHCP Hostname (Option12)": "N",
         "Enable DHCP Vendorname (Option60)": "N",
-        "Enable MESH(only apply in WIFI CHIP_PKT_32K)": "N",
+        "Enable MESH(only apply in WIFI CHIP_PKT_32K)": "Y",
         "Enable Option Router (Option3)": "Y",
         "Enable WPA3": "N",
         "Enable WPS": "N",
@@ -145,13 +145,12 @@
         "Hi3861": "Y",
         "Hi3861L": "N",
         "HiLink support": "N",
-        "Histreaming support": "Y",
         "LINK_NULL": "N",
-        "Lwip Support Lowpower Mode": "N",
-        "MQTT support": "N",
+        "Lwip Support Lowpower Mode": "Y",
+        "MQTT support": "Y",
         "Max Power": "N",
         "NFC": "N",
-        "PWM driver support": "Y",
+        "PWM driver support": "N",
         "PWM hold after reboot": "N",
         "RSA_PSS": "N",
         "RSA_V15": "N",
@@ -163,15 +162,17 @@
         "TEE HUKS support": "N",
         "TRAFFIC_LIGHT": "N",
         "UART support DMA": "N",
+        "UDP transport support": "N",
         "boot ver(value form 0 to 16)": "0",
         "cJson nest limit size": "1000",
-        "cJson support": "N",
+        "cJson support": "Y",
         "compression ota support": "Y",
         "dual-partition ota support": "N",
         "factory test enable": "N",
         "i2c driver support": "Y",
         "i2s driver support": "N",
         "iperf support": "Y",
-        "kernel ver(value form 0 to 48)": "0"
+        "kernel ver(value form 0 to 48)": "0",
+        "tencent cloud connect support": "Y"
     }
 }

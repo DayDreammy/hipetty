@@ -67,7 +67,7 @@ extern "C" {
  * @ingroup los_config
  * Maximum supported number of tasks except the idle task rather than the number of usable tasks
  */
-#define LOSCFG_BASE_CORE_TSK_LIMIT_CONFIG                 18
+#define LOSCFG_BASE_CORE_TSK_LIMIT_CONFIG                 19
 
 /**
  * @ingroup los_config

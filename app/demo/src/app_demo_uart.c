@@ -1,41 +1,51 @@
 /*
- * Copyright (c) 2020 HiHope Community.
- * Description: app uart demo
- * Author: HiSpark Product Team.
- * Create: 2019-12-09
+ * Copyright (c) 2020 HiSilicon (Shanghai) Technologies CO., LIMITED.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 #include <app_demo_uart.h>
-#include <app_demo_multi_sample.h>
-hi_u32 g_uart_demo_task_id = 0;
+#include "hisignalling_protocol.h"
+#include <hi_stdlib.h>
+
+hi_u32   g_uart_demo_task_id = 0;
+hi_bool  g_uart_receive_flag = HI_FALSE;
+hi_u8    g_receive_uart_buff[UART_BUFF_SIZE] = {0};
+hi_s32   g_uart_len = 0;
+
 static hi_void *uart_demo_task(hi_void *param)
 {
     hi_u8 uart_buff[UART_BUFF_SIZE] = {0};
-    hi_u8 *uart_buff_ptr = uart_buff;
     hi_unref_param(param);
-    printf("-------------------------------------\r\n");
-    printf(" *    *    ***   ******    *****   *****   *  \r\n");
-    printf(" *    *     *        *    *     *  *       *  \r\n");
-    printf(" ******     *      **      *-* *   *****   *  \r\n");
-    printf(" *    *     *        *    *     *  *   *   *  \r\n");
-    printf(" *    *    ***   ******    *****   *****   *  \r\n");
-    printf("Hello Hi3861!\r\n");
-    printf("-------------------------------------\r\n");
     printf("Initialize uart demo successfully, please enter some datas via DEMO_UART_NUM port...\n");
+
     for (;;) {
-        hi_s32 len = hi_uart_read(DEMO_UART_NUM, uart_buff_ptr, UART_BUFF_SIZE);
-        if (len > 0) {
-#ifdef WRITE_BY_INT
-            hi_uart_write(DEMO_UART_NUM, uart_buff_ptr, len);
-#else
-            hi_uart_write_immediately(DEMO_UART_NUM, uart_buff_ptr, len);
-#endif
-        } else {
-            printf("Read nothing!\n");
-            hi_sleep(1000); /* sleep 1000ms */
+       // printf("uart receive:  %s  \n",g_receive_uart_buff);
+       // printf("g_uart_receive_flag:%d\n",g_uart_receive_flag);
+        
+        g_uart_len = hi_uart_read(DEMO_UART_NUM, uart_buff, UART_BUFF_SIZE);
+
+        //printf("g_uart_len:%d\n",g_uart_len);
+
+        if (g_uart_len > 0) { 
+            if (g_uart_receive_flag == HI_FALSE) {
+                memcpy_s(g_receive_uart_buff, g_uart_len, uart_buff, g_uart_len);
+                g_uart_receive_flag = HI_TRUE;
+            }
         }
+        hi_sleep(20); /* sleep 20ms */
     }
 
+    //printf("delete g_uart_demo_task_id\n");
     hi_task_delete(g_uart_demo_task_id);
     g_uart_demo_task_id = 0;
 
@@ -66,7 +76,7 @@ hi_void uart_demo(hi_void)
     hi_task_attr attr = {0};
     attr.stack_size = UART_DEMO_TASK_STAK_SIZE;
     attr.task_prio = UART_DEMO_TASK_PRIORITY;
-    attr.task_name = (hi_char*)"uart_demo";
+    attr.task_name = (hi_char*)"uart demo";
     ret = hi_task_create(&g_uart_demo_task_id, &attr, uart_demo_task, HI_NULL);
     if (ret != HI_ERR_SUCCESS) {
         printf("Falied to create uart demo task!\n");

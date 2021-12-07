@@ -1,8 +1,16 @@
 /*
- * Copyright (c) 2020 HiHope Community.
- * Description: wifi sta
- * Author: HiSpark Product Team.
- * Create: 2019-11-30
+ * Copyright (c) 2020 HiSilicon (Shanghai) Technologies CO., LIMITED.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 #include <unistd.h>
@@ -10,13 +18,15 @@
 #include "wifi_sta.h"
 #include "lwip/ip_addr.h"
 #include "lwip/netifapi.h"
-#include "app_demo_get_mac_addr.h"
+#include <hi_types_base.h>
+#include <hi_task.h>
+#include <string.h>
 
 #define APP_INIT_VAP_NUM    2
 #define APP_INIT_USR_NUM    2
 
 static struct netif *g_lwip_netif = NULL;
-extern hi_uchar hispark_ssid[64];
+
 /* clear netif's ip, gateway and netmask */
 void hi_sta_reset_addr(struct netif *pst_lwip_netif)
 {
@@ -68,10 +78,8 @@ int hi_wifi_start_connect(void)
     errno_t rc;
     hi_wifi_assoc_request assoc_req = {0};
 
-    /*get Hi3861 mac addr*/
-    hi3816_get_mac_addr();
     /* copy SSID to assoc_req */
-    rc = memcpy_s(assoc_req.ssid, HI_WIFI_MAX_SSID_LEN + 1, hispark_ssid, 20); /* 20:ssid length */
+    rc = memcpy_s(assoc_req.ssid, HI_WIFI_MAX_SSID_LEN + 1, "Hisilicon", 9); /* 1:ssid length */
     if (rc != EOK) {
         return -1;
     }
@@ -83,7 +91,7 @@ int hi_wifi_start_connect(void)
      * then memcpy(assoc_req.key, "12345678", 8).
      */
     assoc_req.auth = HI_WIFI_SECURITY_OPEN;
-
+    // rc = memcpy_s(assoc_req.key, HI_WIFI_MAX_SSID_LEN + 1, "12345678", 8); /* 8:key length */
     ret = hi_wifi_sta_connect(&assoc_req);
     if (ret != HISI_OK) {
         return -1;
@@ -174,4 +182,18 @@ void hi_wifi_stop_sta(void)
     }
 
     g_lwip_netif = NULL;
+}
+void wifiStaReadWait(void) {
+    ip4_addr_t ipAddr;
+    ip4_addr_t ipAny;
+    IP4_ADDR(&ipAny, 0, 0, 0, 0);
+    IP4_ADDR(&ipAddr, 0, 0, 0, 0);
+    hi_wifi_start_sta();
+    while(0 == memcpy(&ipAddr, &ipAny, sizeof(ip4_addr_t))) {
+        printf("Wait the DHCP RAEDY");
+        netifapi_netif_get_addr(g_lwip_netif, &ipAddr, NULL,NULL);
+        hi_sleep(1000);
+    }
+    printf("wifi sta dhcp done");
+    return;
 }

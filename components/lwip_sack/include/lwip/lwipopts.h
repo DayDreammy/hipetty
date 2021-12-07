@@ -5,6 +5,11 @@
 #ifndef __LWIPOPTS_H__
 #define __LWIPOPTS_H__
 
+#define LWIP_API_RICH 1
+#define LWIP_IGMP 1
+#define LWIP_MDNS_RESPONDER 1
+// #define LWIP_NUM_NETIF_CLIENT_DATA (LWIP_MDNS_RESPONDER)
+
 #if defined (__cplusplus) && __cplusplus
 extern "C" {
 #endif

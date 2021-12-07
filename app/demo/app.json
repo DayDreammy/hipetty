@@ -2,10 +2,10 @@
     "TARGET_LIB": "demo",
     "APP_SRCS": [
         "init",
-        "src"
+        "src",
+        "iot_demo"
     ],
     "INCLUDE": [
-        "components/histreaming/src",
         "components/iperf2/include",
         "app/demo/include",
         "app/demo/init",
@@ -16,7 +16,9 @@
         "components/ripple/exports",
         "components/hilink/include",
         "third_party/mbedtls/include/mbedtls/",
-        "include/OHOS"
+        "include/OHOS",
+        "third_party/libcoap/include/coap2",
+        "app/demo/iot_demo"
     ],
     "CC_FLAGS": [
         "-g"
@@ -31,4 +33,5 @@
     "AS_FLAGS": [],
     "LD_DIRS": [],
     "CLEAN": []
+    
 }

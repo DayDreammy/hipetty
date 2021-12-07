@@ -1,18 +1,29 @@
-
+/*
+ * Copyright (c) 2020 HiSilicon (Shanghai) Technologies CO., LIMITED.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 #include "i2c.h"
 #include <hi_sem.h>
 #include <hi_i2c.h>
 #include <hi_time.h>
 #include <hi3861_platform_base.h>
-#include <../app/demo/src/c081_nfc.h>
 
 #define I2C0_BASE HI_I2C0_REG_BASE
 #define I2C1_BASE HI_I2C1_REG_BASE
 #define CLKEN_I2C0 14
 #define CLKEN_I2C1 15
 
-extern hi_u8 read_reg ;
 hi_u32 g_i2c_drv_sem[2] = {0xffffffff, 0xffffffff}; // for 2 i2c
 
 hi_u32 g_i2c_rcv_time_out_us = 4096;
@@ -513,14 +524,12 @@ static hi_u32 i2c_send_data(hi_i2c_idx id, hi_u16 device_addr, const hi_i2c_data
             return ret;
         }
     }
-    if(read_reg == NFC_RECOVERY){
-        ret = i2c_stop(id);
-            if (ret != HI_ERR_SUCCESS) {
-            hi_reg_write32((i2c_base(id) + I2C_ICR), I2C_CLEAR_ALL);
-            return ret;
-        }
+
+    ret = i2c_stop(id);
+    if (ret != HI_ERR_SUCCESS) {
+        hi_reg_write32((i2c_base(id) + I2C_ICR), I2C_CLEAR_ALL);
+        return ret;
     }
-    read_reg = NFC_RECOVERY;
 
     return HI_ERR_SUCCESS;
 }

@@ -1,22 +1,27 @@
 /*
- * Copyright (c) 2020 HiHope Community.
- * Description: wifi softap
- * Author: HiSpark Product Team.
- * Create: 2019-11-30
+ * Copyright (c) 2020 HiSilicon (Shanghai) Technologies CO., LIMITED.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 #include "hi_wifi_api.h"
 #include "wifi_softap.h"
 #include "lwip/ip_addr.h"
 #include "lwip/netifapi.h"
-#include <hi_types_base.h>
-#include <app_demo_get_mac_addr.h>
 
 #define APP_INIT_VAP_NUM    2
 #define APP_INIT_USR_NUM    2
 
 static struct netif *g_lwip_netif = NULL;
-extern hi_uchar hispark_ssid[64];
 
 /* clear netif's ip, gateway and netmask */
 void hi_softap_reset_addr(struct netif *pst_lwip_netif)
@@ -49,16 +54,15 @@ int hi_wifi_start_softap(void)
     ip4_addr_t st_gw;
     ip4_addr_t st_ipaddr;
     ip4_addr_t st_netmask;
+    ip4_addr_t st_port;
 
     ret = hi_wifi_init(wifi_vap_res_num, wifi_user_res_num);
     if (ret != HISI_OK) {
         printf("hi_wifi_init\n");
         return -1;
     }
-    /*get Hi3861 mac addr*/
-    hi3816_get_mac_addr();
 
-    rc = memcpy_s(hapd_conf.ssid, HI_WIFI_MAX_SSID_LEN + 1, hispark_ssid, 20); /* 20:ssid length */
+    rc = memcpy_s(hapd_conf.ssid, HI_WIFI_MAX_SSID_LEN + 1, "Hisilicon5", 10); /* 9:ssid length */
     if (rc != EOK) {
         return -1;
     }
@@ -80,7 +84,7 @@ int hi_wifi_start_softap(void)
     }
 
     IP4_ADDR(&st_gw, 192, 168, 1, 1);          /* input your IP for example: 192.168.1.1 */
-    IP4_ADDR(&st_ipaddr, 192, 168, 1, 1);      /* input your netmask for example: 192.168.1.1 */
+    IP4_ADDR(&st_ipaddr, 192, 168, 1, 4);      /* input your netmask for example: 192.168.1.1 */
     IP4_ADDR(&st_netmask, 255, 255, 255, 0);     /* input your gateway for example: 255.255.255.0 */
     netifapi_netif_set_addr(g_lwip_netif, &st_ipaddr, &st_netmask, &st_gw);
 

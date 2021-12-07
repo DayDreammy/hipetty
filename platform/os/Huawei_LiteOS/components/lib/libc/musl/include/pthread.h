@@ -9,7 +9,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-
+#define __LITEOS__
 #ifdef __LITEOS__
 #include "bits/pthread_types.h"
 #include "los_list.h"

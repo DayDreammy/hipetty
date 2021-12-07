@@ -304,7 +304,9 @@ hi_s32 hi_uart_read(hi_uart_idx id, hi_u8 *data, hi_u32 data_len)
         return (hi_s32)HI_ERR_FAILURE;
     }
 
+   // printf("1.1\n");
     num = uart_read(g_udd_g[port_num], (hi_char *) data, data_len);
+    //printf("1.2\n");
     return num;
 }
 
