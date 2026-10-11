@@ -2,6 +2,8 @@ HeyPetty 宠物喂食机器人
 ======================================
 该作品参加2021海思嵌入式大赛获得国赛三等奖。当时三个人都是大二报名，比赛结束刚上大三，水平有限，欢迎批评指正。
 
+![HeyPetty 宠物喂食机器人](images/hipetty-feeder.png)
+
 ### 团队介绍：
 “当筵意气临九霄，星离雨散不终朝。”团队由同济大学电子信息与工程学院的三名本科生组成，分别负责 AI 视觉、微信小程序开发与 IoT 通讯控制。
 ### 作品介绍：
@@ -20,6 +22,5 @@ https://mp.weixin.qq.com/s/XKbHRPKEUVHgLpUTMRTTvA
 - Taurus 端代码放在cats_and_dogs_classify分支
 
 - 微信小程序代码在 master 分支里的 压缩包《9.8.0》
-
 
 
