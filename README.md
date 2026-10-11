@@ -14,7 +14,7 @@ HeyPetty 宠物喂食机器人
 
 ### 作品视频介绍：
 发布在 上海海思 公众号了
-https://mp.weixin.qq.com/s/XKbHRPKEUVHgLpUTMRTTvA
+~~[https://mp.weixin.qq.com/s/XKbHRPKEUVHgLpUTMRTTvA](https://mp.weixin.qq.com/s/XKbHRPKEUVHgLpUTMRTTvA)~~（该链接已失效）
 
 
 ### 仓库介绍：
